@@ -73,7 +73,10 @@ npm start
 ### Background Mode
 
 Run cURLite in the background with error-only logging:
-
+Need some permissions first :)
+```
+chmod +x scripts/background.sh
+```
 ```bash
 # Start in background (recommended for daily use)
 npm run start:bg
