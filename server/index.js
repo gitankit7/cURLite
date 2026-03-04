@@ -8,7 +8,9 @@ import { fileURLToPath } from 'url';
 
 const execAsync = promisify(exec);
 const app = express();
-const PORT = 1235;
+// Configure API server port
+// Can be set via API_PORT env var, or defaults to PORT + 1, or 2402
+const API_PORT = parseInt(process.env.API_PORT || process.env.PORT ? (parseInt(process.env.PORT) + 1) : '2402', 10);
 
 // --- File-based storage ---
 // Stores data in  curlite/data/services.json
@@ -138,12 +140,15 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.listen(PORT, () => {
-  console.log(`\n  🚀 cURLite API running at http://localhost:${PORT}`);
-  console.log(`  Data file: ${DATA_FILE}`);
-  console.log(`  Endpoints:`);
-  console.log(`    GET  /api/data     — read services`);
-  console.log(`    PUT  /api/data     — save services`);
-  console.log(`    POST /api/execute  — run a curl command`);
-  console.log(`    GET  /api/health   — health check\n`);
+app.listen(API_PORT, () => {
+  console.log(`\n  🚀 cURLite API Server Started`);
+  console.log(`  ✅ Running at: http://localhost:${API_PORT}`);
+  console.log(`  📁 Data file: ${DATA_FILE}`);
+  console.log(`  ⚙️  Port configured via: ${process.env.API_PORT ? 'API_PORT env var' : process.env.PORT ? 'PORT env var (+1)' : 'default'}`);
+  console.log(`  📡 Available endpoints:`);
+  console.log(`     GET  /api/data     — read services`);
+  console.log(`     PUT  /api/data     — save services`);
+  console.log(`     POST /api/execute  — run a curl command`);
+  console.log(`     GET  /api/health   — health check`);
+  console.log(`  💡 Set API_PORT environment variable to customize port\n`);
 });

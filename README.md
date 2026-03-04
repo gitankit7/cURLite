@@ -22,6 +22,7 @@ A lightweight, local-first curl command builder and executor. Organize your API 
 - **Copy to clipboard** — one-click copy for any generated or saved command
 - **Persistent storage** — data saved as a plain JSON file on disk (`data/services.json`); delete it anytime to reset
 - **Export / Import** — backup your data as JSON or restore from a previous export
+- **Configurable ports** — customize both frontend and API server ports via environment variables
 
 ## Quick Start
 
@@ -34,14 +35,71 @@ A lightweight, local-first curl command builder and executor. Organize your API 
 
 ```bash
 git clone https://github.com/gitankit7/curlite.git
-cd curlite
+cd cURLite
 npm install
 
 # Start both frontend + backend
 npm start
 ```
 
-Open **http://localhost:1234** in your browser.
+Open **http://localhost:2401** in your browser.
+
+### Port Configuration(if ports not available or you want to customize):
+
+Configure ports using environment variables:
+
+```bash
+# Method 1: Use specific port variables
+DEV_PORT=3000 API_PORT=3001 npm start
+
+# Method 2: Use legacy PORT variable (API will be PORT + 1)
+PORT=3000 npm start  # frontend: 3000, API: 3001
+
+# Method 3: Create .env file from .env.example
+cp .env.example .env
+# Edit .env with your preferred ports
+npm start
+```
+
+**Default ports:**
+- Frontend (Vite): `2401`
+- API Server (Express): `2402`
+
+**Environment variables:**
+- `DEV_PORT` — Frontend development server port
+- `API_PORT` — API server port
+- `PORT` — Legacy mode: sets frontend port, API becomes PORT + 1
+
+### Background Mode
+
+Run cURLite in the background with error-only logging:
+
+```bash
+# Start in background (recommended for daily use)
+npm run start:bg
+
+# Check status
+npm run status:bg
+
+# View error logs
+npm run logs:bg
+
+# Stop background process
+npm run stop:bg
+```
+
+**Manual background options:**
+```bash
+# Background with error logging
+npm start > /dev/null 2> curlite-errors.log &
+echo $! > curlite.pid
+
+# Check if running
+kill -0 $(cat curlite.pid) && echo "Running" || echo "Stopped"
+
+# Stop
+kill $(cat curlite.pid) && rm curlite.pid
+```
 
 > **Frontend only?** Run `npm run dev` if you just want the builder without curl execution.
 
@@ -65,11 +123,12 @@ Open **http://localhost:1234** in your browser.
 
 ```
 curlite/
+├── .gitignore
 ├── index.html                 # Entry HTML
 ├── package.json
 ├── vite.config.js             # Vite dev server (proxies /api → Express)
-├── data/
-│   └── services.json          # Persistent storage (auto-created, gitignored)
+├── data/                      # Auto-created, gitignored
+│   └── services.json          # Your saved data
 ├── server/
 │   └── index.js               # Express backend — curl execution + data API
 └── src/
@@ -84,13 +143,18 @@ curlite/
 
 ## Scripts
 
-| Command           | Description                                |
-|-------------------|--------------------------------------------|
-| `npm start`       | Start frontend (1234) + backend (1235)     |
-| `npm run dev`     | Start Vite dev server only (port 1234)     |
-| `npm run server`  | Start Express API only (port 1235)         |
-| `npm run build`   | Production build to `dist/`                |
-| `npm run preview` | Preview production build                   |
+| Command                  | Description                                       |
+|--------------------------|---------------------------------------------------|
+| `npm start`              | Start frontend (2401) + backend (2402)           |
+| `npm run start:bg`       | **Start in background with error logging**       |
+| `npm run stop:bg`        | **Stop background process**                      |
+| `npm run status:bg`      | **Check background process status**              |
+| `npm run logs:bg`        | **View background error logs**                   |
+| `npm run dev`            | Start Vite dev server only (port 2401)           |
+| `npm run server`         | Start Express API only (port 2402)               |
+| `npm run build`          | Production build to `dist/`                      |
+| `npm run preview`        | Preview production build                         |
+| `PORT=3000 npm start`    | Run with custom ports (frontend: 3000, API: 3001) |
 
 ## Storage
 
@@ -100,7 +164,7 @@ All data is persisted as a **plain JSON file** at:
 data/services.json
 ```
 
-This file is gitignored by default. To reset everything, just delete the `data/` folder — it recreates with 3 default services on next launch.
+This file and folder are auto-created on first use and gitignored by default. To reset everything, just delete the `data/` folder.
 
 The frontend also mirrors data to `localStorage` as a fast fallback, so running frontend-only (`npm run dev`) still works without the backend.
 
@@ -112,13 +176,13 @@ From the browser console:
 // Download a backup
 (await import('/src/storage.js')).default.exportJSON()
 
-// Import from file (via file picker or programmatically)
+// Import from file
 (await import('/src/storage.js')).default.importJSON(file)
 ```
 
 ## API Endpoints
 
-The Express backend at `localhost:1235` exposes:
+The Express backend at `localhost:2402` (or your configured API_PORT) exposes:
 
 | Method | Endpoint        | Description                        |
 |--------|-----------------|------------------------------------|
@@ -162,3 +226,4 @@ MIT — do whatever you want with it.
 ---
 
 Built with ☕ and a lot of curling.
+

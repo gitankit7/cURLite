@@ -8,7 +8,11 @@
     "build": "vite build",
     "preview": "vite preview",
     "server": "node server/index.js",
-    "start": "concurrently \"npm run dev\" \"npm run server\""
+    "start": "concurrently \"npm run dev\" \"npm run server\"",
+    "start:bg": "scripts/background.sh start",
+    "stop:bg": "scripts/background.sh stop",
+    "status:bg": "scripts/background.sh status",
+    "logs:bg": "scripts/background.sh logs"
   },
   "dependencies": {
     "react": "^18.2.0",
