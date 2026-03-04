@@ -29,3 +29,8 @@ npm-debug.log*
 
 # Vite
 *.local
+
+#process
+curlite.pid
+package-lock.json
+
