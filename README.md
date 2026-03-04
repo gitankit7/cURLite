@@ -35,7 +35,7 @@ A lightweight, local-first curl command builder and executor. Organize your API 
 
 ```bash
 git clone https://github.com/gitankit7/curlite.git
-cd curlite
+cd cURLite
 npm install
 
 # Start both frontend + backend
